@@ -1,0 +1,74 @@
+# APort SDK Generation Workflow
+# This workflow generates SDKs and client libraries for APort agents
+name: APort SDK Generation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      agent_id:
+        description: "Agent ID to generate SDK for"
+        required: true
+        type: string
+      languages:
+        description: "Languages to generate"
+        required: false
+        default: "python,nodejs,go"
+        type: string
+
+jobs:
+  generate-sdk:
+    runs-on: ubuntu-latest
+    name: Generate SDK
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate SDK
+        id: generate
+        uses: aporthq/sdk-generator-action@v1
+        with:
+          agent-id: ${{ github.event.inputs.agent_id || secrets.APORT_AGENT_ID }}
+          languages: ${{ github.event.inputs.languages || 'python,nodejs,go' }}
+          output-dir: "./generated-sdk"
+          include-types: "true"
+
+      - name: Upload SDK Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: generated-sdk
+          path: generated-sdk/
+
+      - name: Publish Python SDK
+        if: contains(steps.generate.outputs.languages_generated, 'python')
+        run: |
+          echo "📦 Publishing Python SDK..."
+          cd generated-sdk/python
+          # Add your Python publishing logic here
+          echo "✅ Python SDK published"
+
+      - name: Publish Node.js SDK
+        if: contains(steps.generate.outputs.languages_generated, 'nodejs')
+        run: |
+          echo "📦 Publishing Node.js SDK..."
+          cd generated-sdk/nodejs
+          # Add your Node.js publishing logic here
+          echo "✅ Node.js SDK published"
+
+      - name: Publish Go SDK
+        if: contains(steps.generate.outputs.languages_generated, 'go')
+        run: |
+          echo "📦 Publishing Go SDK..."
+          cd generated-sdk/go
+          # Add your Go publishing logic here
+          echo "✅ Go SDK published"
+
+      - name: Report Results
+        run: |
+          echo "📊 SDK Generation Results:"
+          echo "  Agent ID: ${{ github.event.inputs.agent_id || secrets.APORT_AGENT_ID }}"
+          echo "  Languages: ${{ steps.generate.outputs.languages_generated }}"
+          echo "  Files Generated: ${{ steps.generate.outputs.generated_files }}"
+          echo "  Success: ${{ steps.generate.outputs.success }}"

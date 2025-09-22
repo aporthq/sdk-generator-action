@@ -1,0 +1,16 @@
+# Simple APort SDK Generation
+# Copy this to your .github/workflows/ directory
+
+name: Generate APort SDK
+on: [workflow_dispatch]
+
+jobs:
+  generate-sdk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aporthq/sdk-generator-action@v1
+        with:
+          agent-id: ${{ secrets.APORT_AGENT_ID }}
+          languages: "python,nodejs"
+          output-dir: "./generated-sdk"
