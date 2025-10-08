@@ -128,7 +128,7 @@ class APortClient:
     def verify_policy(self, context: PolicyContext) -> Dict[str, Any]:
         """Verify policy against agent"""
         response = requests.post(
-            f"{self.api_base}/api/verify/policy/repo.v1",
+            f"{self.api_base}/api/verify/policy/code.repository.merge.v1",
             json={"agent_id": self.agent_id, "context": context.dict()}
         )
         response.raise_for_status()
@@ -246,7 +246,7 @@ export class APortClient {
   }
 
   async verifyPolicy(context: PolicyContext): Promise<any> {
-    const response = await fetch(\`\${this.apiBase}/api/verify/policy/repo.v1\`, {
+    const response = await fetch(\`\${this.apiBase}/api/verify/policy/code.repository.merge.v1\`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -382,7 +382,7 @@ func (c *APortClient) GetPassport() (*AgentPassport, error) {
 
 // VerifyPolicy verifies policy against the agent
 func (c *APortClient) VerifyPolicy(ctx PolicyContext) (map[string]interface{}, error) {
-    url := fmt.Sprintf("%s/api/verify/policy/repo.v1", c.apiBase)
+    url := fmt.Sprintf("%s/api/verify/policy/code.repository.merge.v1", c.apiBase)
     
     payload := map[string]interface{}{
         "agent_id": c.agentID,
